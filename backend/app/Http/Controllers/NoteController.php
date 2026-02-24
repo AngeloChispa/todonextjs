@@ -19,10 +19,11 @@ class NoteController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {   
+
         $note = new Note();
         $note->message = $request->message;
-
+        error_log($request->message);
         $note->save();
 
         return response()->json([
@@ -36,7 +37,11 @@ class NoteController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $note = Note::findOrFail($id);
+
+        return response()->json([
+            'message' => $note->message
+        ], 200);
     }
 
     /**

@@ -1,5 +1,4 @@
 'use client'
-import axios from 'axios'
 import { useState } from 'react'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -7,6 +6,7 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form';
 import { Container } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
+import fetchAPI from '@/lib/fetch';
 
 
 const InputText = () => {
@@ -15,16 +15,10 @@ const InputText = () => {
     const [note, setNote] = useState('');
     const router = useRouter();
 
-    const createNote = () => {
-
-        axios.post('http://127.0.0.1:8000/api/Notes', {
-            "message": note
-        }).then(function (response) {
-            console.log(response);
-        }).catch(function (error) {
-            console.log(error);
-        })
+    const createNote = async () => {
         
+        fetchAPI({message: note, verb:'POST'})
+
         setNote('');
 
         router.refresh();
