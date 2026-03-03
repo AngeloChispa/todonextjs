@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -23,7 +23,9 @@ function Login() {
     try {
       const userData = await login(credentials);
       setUser(userData);
-      alert(`¡Bienvenido, ${userData.name}!`);
+      throw redirect ({
+        to: '/todo'
+      });
     } catch (err: any) {
       const message = err.response?.data?.message || 'Error al iniciar sesión';
       console.log(message);

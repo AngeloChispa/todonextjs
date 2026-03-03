@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as todoTodoRouteImport } from './routes/(todo)/todo'
 import { Route as loginLoginRouteImport } from './routes/(login)/login'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const todoTodoRoute = todoTodoRouteImport.update({
+  id: '/(todo)/todo',
+  path: '/todo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const loginLoginRoute = loginLoginRouteImport.update({
@@ -26,27 +32,31 @@ const loginLoginRoute = loginLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof loginLoginRoute
+  '/todo': typeof todoTodoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof loginLoginRoute
+  '/todo': typeof todoTodoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(login)/login': typeof loginLoginRoute
+  '/(todo)/todo': typeof todoTodoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths: '/' | '/login' | '/todo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/(login)/login'
+  to: '/' | '/login' | '/todo'
+  id: '__root__' | '/' | '/(login)/login' | '/(todo)/todo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   loginLoginRoute: typeof loginLoginRoute
+  todoTodoRoute: typeof todoTodoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(todo)/todo': {
+      id: '/(todo)/todo'
+      path: '/todo'
+      fullPath: '/todo'
+      preLoaderRoute: typeof todoTodoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(login)/login': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   loginLoginRoute: loginLoginRoute,
+  todoTodoRoute: todoTodoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
