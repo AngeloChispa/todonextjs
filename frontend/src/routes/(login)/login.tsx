@@ -20,7 +20,6 @@ function Login() {
     
     const formData = new FormData(e.currentTarget);
     const credentials = Object.fromEntries(formData) as unknown as LoginCredentials;
-
     try {
       const userData = await login(credentials);
       setUser(userData);
@@ -40,11 +39,11 @@ function Login() {
           <Form onSubmit={handleSubmit}>
             <Form.Group>
               <Form.Label>Email Address</Form.Label>
-              <Form.Control type='email' placeholder='Enter Email'></Form.Control>
+              <Form.Control name='email' type='email' placeholder='Enter Email'></Form.Control>
             </Form.Group>
             <Form.Group>
               <Form.Label>Password</Form.Label>
-              <Form.Control type='password' placeholder='Enter Password'></Form.Control>
+              <Form.Control name='password' type='password' placeholder='Enter Password'></Form.Control>
             </Form.Group>
             <div className='justify-content-end d-flex w-100'>
               <Button variant='secondary' type='submit' className='mt-3'>Log in</Button>
