@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 import type { LoginCredentials } from '#/types';
-
+import { useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(login)/login')({
   component: Login,
@@ -14,6 +14,7 @@ function Login() {
 
   const { auth } = Route.useRouteContext()
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
   //const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -25,12 +26,11 @@ function Login() {
 
     try {
       await auth.login(credentials)
-      throw redirect({
+      navigate({
         to: '/todo'
-      })
+      });
     } catch (err: any) {
-      const message = err.response?.data?.message || 'Error al iniciar sesión';
-      console.log(message);
+      console.log(err.response.data);
     } finally {
       setIsLoading(false)
     }

@@ -63,7 +63,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (err: any) {
             const message = err.response?.data?.message || 'Error al iniciar sesión';
             console.log(message);
-            throw new Error('Authentication failed')
         }
     }
 
