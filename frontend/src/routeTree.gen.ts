@@ -9,19 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as todoTodoRouteImport } from './routes/(todo)/todo'
+import { Route as AuthenticatedTodoRouteImport } from './routes/_authenticated/todo'
 import { Route as loginLoginRouteImport } from './routes/(login)/login'
 
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const todoTodoRoute = todoTodoRouteImport.update({
-  id: '/(todo)/todo',
+const AuthenticatedTodoRoute = AuthenticatedTodoRouteImport.update({
+  id: '/todo',
   path: '/todo',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const loginLoginRoute = loginLoginRouteImport.update({
   id: '/(login)/login',
@@ -32,35 +37,48 @@ const loginLoginRoute = loginLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof loginLoginRoute
-  '/todo': typeof todoTodoRoute
+  '/todo': typeof AuthenticatedTodoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof loginLoginRoute
-  '/todo': typeof todoTodoRoute
+  '/todo': typeof AuthenticatedTodoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/(login)/login': typeof loginLoginRoute
-  '/(todo)/todo': typeof todoTodoRoute
+  '/_authenticated/todo': typeof AuthenticatedTodoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/login' | '/todo'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/login' | '/todo'
-  id: '__root__' | '/' | '/(login)/login' | '/(todo)/todo'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/(login)/login'
+    | '/_authenticated/todo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   loginLoginRoute: typeof loginLoginRoute
-  todoTodoRoute: typeof todoTodoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -68,12 +86,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(todo)/todo': {
-      id: '/(todo)/todo'
+    '/_authenticated/todo': {
+      id: '/_authenticated/todo'
       path: '/todo'
       fullPath: '/todo'
-      preLoaderRoute: typeof todoTodoRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedTodoRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/(login)/login': {
       id: '/(login)/login'
@@ -85,10 +103,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedTodoRoute: typeof AuthenticatedTodoRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedTodoRoute: AuthenticatedTodoRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   loginLoginRoute: loginLoginRoute,
-  todoTodoRoute: todoTodoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

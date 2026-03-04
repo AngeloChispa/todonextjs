@@ -3,34 +3,37 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
-import type {LoginCredentials, User} from '#/types';
-import { login } from './-login';
+import type { LoginCredentials } from '#/types';
 
 
 export const Route = createFileRoute('/(login)/login')({
-  component: Login
+  component: Login,
 })
 
 function Login() {
 
-  const [user, setUser] = useState<User | null>(null);
+  const { auth } = Route.useRouteContext()
+  const [isLoading, setIsLoading] = useState(false)
+  //const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+    setIsLoading(true)
+
     const formData = new FormData(e.currentTarget);
     const credentials = Object.fromEntries(formData) as unknown as LoginCredentials;
+
     try {
-      const userData = await login(credentials);
-      setUser(userData);
-      throw redirect ({
+      await auth.login(credentials)
+      throw redirect({
         to: '/todo'
-      });
+      })
     } catch (err: any) {
       const message = err.response?.data?.message || 'Error al iniciar sesión';
       console.log(message);
+    } finally {
+      setIsLoading(false)
     }
-
   }
 
   return (
@@ -48,7 +51,7 @@ function Login() {
               <Form.Control name='password' type='password' placeholder='Enter Password'></Form.Control>
             </Form.Group>
             <div className='justify-content-end d-flex w-100'>
-              <Button variant='secondary' type='submit' className='mt-3'>Log in</Button>
+              <Button variant='secondary' type='submit' className='mt-3'>{isLoading ? 'Signing in...' : 'Sign In'}</Button>
             </div>
           </Form>
         </Card.Body>
