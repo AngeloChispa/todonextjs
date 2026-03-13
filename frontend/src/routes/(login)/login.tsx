@@ -1,10 +1,11 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
+import {  useState } from 'react';
 import type { LoginCredentials } from '#/types';
 import { useNavigate } from '@tanstack/react-router'
+import { router } from '#/router';
 
 export const Route = createFileRoute('/(login)/login')({
   component: Login,
@@ -17,6 +18,7 @@ function Login() {
   const navigate = useNavigate()
   //const [error, setError] = useState('')
 
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
@@ -26,11 +28,12 @@ function Login() {
 
     try {
       await auth.login(credentials)
+      await router.invalidate()
       navigate({
         to: '/todo'
       });
     } catch (err: any) {
-      console.log(err.response.data);
+      console.log(err);
     } finally {
       setIsLoading(false)
     }
